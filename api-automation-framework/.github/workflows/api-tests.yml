@@ -1,0 +1,55 @@
+name: API Automation Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 2 * * *'   # Nightly run at 2AM UTC
+  workflow_dispatch:       # Allow manual trigger
+
+jobs:
+  test:
+    name: API Tests (${{ matrix.env }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        env: [dev, qa]
+      fail-fast: false     # continue other envs if one fails
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Run API Tests
+        run: mvn test -P${{ matrix.env }} --no-transfer-progress
+        env:
+          OAUTH_CLIENT_SECRET: ${{ secrets.OAUTH_CLIENT_SECRET }}
+
+      - name: Generate Allure Report
+        uses: simple-elf/allure-report-action@v1
+        if: always()     # generate even if tests fail
+        with:
+          allure_results: target/allure-results
+          allure_history: allure-history
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-report-${{ matrix.env }}
+          path: allure-report
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "Tests failed on ${{ matrix.env }} environment"
+          echo "See: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
