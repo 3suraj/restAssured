@@ -12,9 +12,10 @@ public abstract class BaseTest {
     @BeforeEach
     void setUpContext(TestInfo testInfo) {
         RequestContext.init();
-        Allure.label("environment", EnvironmentConfig.env());
-        Allure.label("thread",      Thread.currentThread().getName());
-        Allure.label("test",        testInfo.getDisplayName());
+        // Removed problematic Allure labels that cause Instant overflow with Java 21
+        // Allure automatically captures test name and metadata without manual labels
+        Allure.parameter("environment", EnvironmentConfig.env());
+        Allure.parameter("thread", Thread.currentThread().getName());
     }
 
     @AfterEach
