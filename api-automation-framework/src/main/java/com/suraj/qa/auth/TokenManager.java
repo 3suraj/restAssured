@@ -20,6 +20,12 @@ public class TokenManager {
     public static TokenManager getInstance() { return INSTANCE; }
 
     public String getToken() {
+        // For JSONPlaceholder (no real OAuth), return a mock token
+        String baseUrl = EnvironmentConfig.baseUrl();
+        if (baseUrl != null && baseUrl.contains("jsonplaceholder")) {
+            return "mock-jwt-token-for-testing";
+        }
+        
         if (isExpired()) refreshToken();
         return cachedToken;
     }
@@ -45,4 +51,4 @@ public class TokenManager {
 }
 
 // NOTE: For local testing against jsonplaceholder.typicode.com (no real OAuth),
-// we can stub getToken() to return "fake-token" during development.
+// getToken() returns a mock token automatically without calling the OAuth endpoint.
