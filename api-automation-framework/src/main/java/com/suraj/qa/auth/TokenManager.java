@@ -13,7 +13,7 @@ public class TokenManager {
     private static final TokenManager INSTANCE = new TokenManager();
 
     private volatile String cachedToken;
-    private volatile Instant expiresAt = Instant.MIN;
+    private volatile Instant expiresAt = Instant.EPOCH;
 
     private TokenManager() {}
 
