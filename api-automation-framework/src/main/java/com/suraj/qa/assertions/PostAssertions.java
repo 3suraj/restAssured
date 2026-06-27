@@ -1,8 +1,8 @@
 package com.suraj.qa.assertions;
 
+import static org.junit.jupiter.api.Assertions.*;
 import com.suraj.qa.model.response.PostResponse;
 import io.restassured.response.Response;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class PostAssertions {
 

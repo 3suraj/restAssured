@@ -20,7 +20,7 @@
     <junit5.version>5.10.2</junit5.version>
     <allure.version>2.25.0</allure.version>
     <jackson.version>2.17.0</jackson.version>
-    <lombok.version>1.18.32</lombok.version>
+    <lombok.version>1.18.36</lombok.version>
     <awaitility.version>4.2.1</awaitility.version>
     <testcontainers.version>1.19.7</testcontainers.version>
     <env>qa</env>
@@ -33,17 +33,24 @@
     <dependency><groupId>io.rest-assured</groupId>
       <artifactId>json-schema-validator</artifactId><version>${rest-assured.version}</version></dependency>
 
-    <!-- JUnit 5 -->
-    <dependency><groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId><version>${junit5.version}</version><scope>test</scope></dependency>
+    <!-- JUnit 5 (Scope removed to allow assertions inside src/main/java) -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.11.0</version>
+    </dependency>
 
     <!-- Jackson (JSON serialisation) -->
     <dependency><groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId><version>${jackson.version}</version></dependency>
 
     <!-- Lombok (reduces boilerplate) -->
-    <dependency><groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId><version>${lombok.version}</version><scope>provided</scope></dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- Allure Reporting -->
     <dependency><groupId>io.qameta.allure</groupId>
@@ -71,14 +78,21 @@
       <resource><directory>src/test/resources</directory></resource>
     </resources>
     <plugins>
-      <plugin><groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId><version>3.2.5</version>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
         <configuration>
-          <includes><include>**/*Test.java</include></includes>
+          <source>21</source> <!-- Updated from 11 to 21 -->
+          <target>21</target> <!-- Updated from 11 to 21 -->
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>1.18.32</version>
+            </path>
+          </annotationProcessorPaths>
         </configuration>
-      </plugin>
-      <plugin><groupId>io.qameta.allure</groupId>
-        <artifactId>allure-maven</artifactId><version>2.12.0</version>
       </plugin>
     </plugins>
   </build>
